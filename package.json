@@ -5,12 +5,25 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write \"**/*.{js,json,md,css,mdx,jsx,ts,tsx}\""
+    "format": "prettier --write \"**/*.{js,json,md,css,mdx,jsx,ts,tsx}\"",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
     "prettier": "^3.6.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{js,json,md,css,mdx,jsx,ts,tsx}": [
+      "prettier --write"
+    ]
   }
 }
