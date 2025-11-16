@@ -89,13 +89,14 @@ function App() {
             marginTop: 24,
             padding: 16,
             borderRadius: 8,
-            backgroundColor: '#f9f9f9',
+            backgroundColor: '#f0f0f0',
+            color: '#222',
           }}
         >
           <div style={{ fontSize: 14, color: '#555', marginBottom: 8 }}>
             AI의 부정적인 피드백 😈
           </div>
-          <div>{roast}</div>
+          <div style={{ color: '#222' }}>{roast}</div>
         </div>
       )}
     </div>
