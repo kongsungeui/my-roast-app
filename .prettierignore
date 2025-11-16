@@ -1,0 +1,9 @@
+node_modules
+dist
+build
+coverage
+server/node_modules
+frontend/node_modules
+*.lock
+.env
+server/.env
