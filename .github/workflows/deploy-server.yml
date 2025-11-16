@@ -1,0 +1,49 @@
+name: Deploy Server to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "server/**"
+      - ".github/workflows/deploy-server.yml"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build (optional)
+        run: |
+          if [ -f package.json ] && npm run | grep -q "build"; then
+            npm run build
+          else
+            echo "No build step"
+          fi
+
+      - name: Zip artifact
+        run: |
+          zip -r ../server.zip .
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "myroastapp-gwagfdfehqdsg4d3" # Azure에서 만든 이름
+          slot-name: "production"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: "../server.zip"

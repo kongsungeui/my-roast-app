@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   const proxyTarget = env.VITE_PROXY_TARGET || 'http://localhost:4000';
 
   return {
+    base: '/my-roast-app/',
     plugins: [react()],
     server: {
       proxy: {
