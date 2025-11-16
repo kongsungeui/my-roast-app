@@ -24,37 +24,59 @@ if (rawOrigins) {
 
 const allowCredentials = process.env.CORS_ALLOW_CREDENTIALS === 'true';
 
-const corsOptions = {
-  origin: function (incomingOrigin, callback) {
-    // incomingOrigin is undefined for non-browser requests (curl, server-to-server).
-    if (!incomingOrigin) return callback(null, true);
+function isOriginAllowed(incomingOrigin) {
+  if (!incomingOrigin) return true; // non-browser requests
+  if (allowedOrigins === '*' || allowedOrigins === null) return true;
+  return Array.isArray(allowedOrigins) && allowedOrigins.indexOf(incomingOrigin) !== -1;
+}
 
-    if (allowedOrigins === '*' || allowedOrigins === null) {
-      // allow any origin
-      return callback(null, true);
-    }
-
-    // only allow exact matches from the configured list
-    if (Array.isArray(allowedOrigins) && allowedOrigins.indexOf(incomingOrigin) !== -1) {
-      return callback(null, true);
-    }
-
-    // not allowed
-    return callback(new Error('CORS: origin not allowed'));
-  },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: allowCredentials,
-  optionsSuccessStatus: 204,
-};
-
+// Debugging middleware: log origin and path for troubleshooting
 app.use((req, res, next) => {
-  // Quick health: if there is an origin and it's not allowed, respond with 403 for preflight
+  const origin = req.headers.origin;
+  console.log(`[CORS] ${req.method} ${req.path} origin=${origin ?? '<none>'}`);
   next();
 });
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// Handle preflight requests explicitly so we always return the CORS headers
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (req.method === 'OPTIONS') {
+    if (!isOriginAllowed(origin)) {
+      console.warn(`[CORS] Blocked preflight from origin=${origin}`);
+      return res.status(403).json({ error: 'CORS origin not allowed' });
+    }
+
+    // Allow for preflight
+    res.setHeader(
+      'Access-Control-Allow-Origin',
+      allowedOrigins === '*' || allowedOrigins === null ? '*' : origin
+    );
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
+    if (allowCredentials) {
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    return res.status(204).end();
+  }
+
+  next();
+});
+
+// Attach cors-like headers for non-preflight requests
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (!isOriginAllowed(origin)) {
+    console.warn(`[CORS] Request origin not allowed: ${origin}`);
+    return res.status(403).json({ error: 'CORS origin not allowed' });
+  }
+
+  res.setHeader(
+    'Access-Control-Allow-Origin',
+    allowedOrigins === '*' || allowedOrigins === null ? '*' : origin
+  );
+  if (allowCredentials) res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 app.use(express.json());
 
 const openai = new OpenAI({
