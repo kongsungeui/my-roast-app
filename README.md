@@ -16,6 +16,21 @@ my-roast-app
   ```
 - **참고:** 배포 시 환경변수는 호스트(예: Docker, CI, 호스팅 서비스)의 환경설정으로 주입하세요.
 
+**CORS 설정 (서버)**
+
+- `CORS_ORIGIN`: 서버에서 허용할 origin 목록을 콤마로 구분하여 지정하세요. 예:
+  - `CORS_ORIGIN=https://example.app.github.dev,https://another-host` — 정확히 이 origin들만 허용
+  - `CORS_ORIGIN=*` — 모든 origin 허용(개발 편의용)
+  - 미설정이면 기본적으로 개발 편의상 모든 origin을 허용합니다.
+- `CORS_ALLOW_CREDENTIALS`: `true`로 설정하면 `Access-Control-Allow-Credentials: true`를 반환합니다. (기본: `false`)
+
+예: `server/.env`에 추가
+
+```bash
+CORS_ORIGIN=https://fictional-robot-5g5gjwrg7v3vq7j-5173.app.github.dev
+CORS_ALLOW_CREDENTIALS=false
+```
+
 **프론트엔드(Vite) 환경 변수**
 
 - **파일:** `frontend/.env.example`를 참고하여 `frontend/.env`를 생성하세요.
