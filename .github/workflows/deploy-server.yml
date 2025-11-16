@@ -43,7 +43,7 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "myroastapp-gwagfdfehqdsg4d3" # Azure에서 만든 이름
+          app-name: "MyRoastApp" # Azure에서 만든 이름
           slot-name: "production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: "../server.zip"
