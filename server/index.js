@@ -92,7 +92,7 @@ app.post('/api/roast', async (req, res) => {
     }
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-5-mini-2025-08-07', // 플랜에 맞게 선택
+      model: 'gpt-4.1-2025-04-14', // 플랜에 맞게 선택
       messages: [
         {
           role: 'system',
