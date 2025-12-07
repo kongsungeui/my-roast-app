@@ -22,8 +22,8 @@ jobs:
 
       - name: Set up git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "kongsungeui"
+          git config user.email "kkongchi@gmail.com"
 
       - name: Use Node.js
         uses: actions/setup-node@v4
