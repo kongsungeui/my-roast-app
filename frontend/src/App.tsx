@@ -1,4 +1,12 @@
+import type { FormEvent } from 'react';
 import { useState } from 'react';
+
+const ideaPrompts = [
+  '내가 쓴 자소서 좀 꼬집어줘',
+  '밤새 만든 PPT 한 번 깔아줘',
+  '내가 한 말투 좀 디스해줘',
+  '팀 프로젝트 PR 리뷰처럼 날카롭게',
+];
 
 function App() {
   const [text, setText] = useState('');
@@ -6,7 +14,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!text.trim()) return;
 
@@ -40,65 +48,79 @@ function App() {
     }
   };
 
+  const disabled = loading || !text.trim();
+
   return (
-    <div
-      style={{
-        maxWidth: 600,
-        margin: '40px auto',
-        padding: '24px',
-        borderRadius: 12,
-        border: '1px solid #ddd',
-        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-      }}
-    >
-      <h1 style={{ fontSize: 24, marginBottom: 16 }}>AI 악담(장난) 머신 ㅎㅎ</h1>
-      <p style={{ fontSize: 14, color: '#666', marginBottom: 16 }}>
-        한 문장을 적으면, AI가 가볍게 디스해줍니다. 진지한 용도로 쓰지 말 것 😇
-      </p>
+    <div className="page">
+      <div className="page__glow" aria-hidden />
+      <main className="card">
+        <div className="eyebrow">Roast Playground</div>
+        <h1 className="title">AI 악담(장난) 머신</h1>
+        <p className="subtitle">
+          한 문장을 적으면, AI가 가볍게 디스해줍니다. 장난스럽게 받아들이고 웃어넘겨주세요 😇
+        </p>
 
-      <form onSubmit={handleSubmit}>
-        <textarea
-          rows={3}
-          style={{ width: '100%', padding: 8, resize: 'vertical' }}
-          placeholder="여기에 문장을 적어보세요"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={loading || !text.trim()}
-          style={{
-            marginTop: 12,
-            padding: '8px 16px',
-            borderRadius: 8,
-            border: 'none',
-            backgroundColor: loading || !text.trim() ? '#ccc' : '#007bff',
-            color: '#fff',
-            cursor: loading || !text.trim() ? 'default' : 'pointer',
-          }}
-        >
-          {loading ? '생각 중…' : '디스해줘 ㅋㅋ'}
-        </button>
-      </form>
-
-      {error && <p style={{ marginTop: 16, color: 'red' }}>{error}</p>}
-
-      {roast && (
-        <div
-          style={{
-            marginTop: 24,
-            padding: 16,
-            borderRadius: 8,
-            backgroundColor: '#f0f0f0',
-            color: '#222',
-          }}
-        >
-          <div style={{ fontSize: 14, color: '#555', marginBottom: 8 }}>
-            AI의 부정적인 피드백 😈
-          </div>
-          <div style={{ color: '#222' }}>{roast}</div>
+        <div className="chip-row" role="list">
+          {ideaPrompts.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              className="chip"
+              onClick={() => {
+                setText(prompt);
+                setRoast('');
+                setError('');
+              }}
+              disabled={loading}
+              role="listitem"
+            >
+              {prompt}
+            </button>
+          ))}
         </div>
-      )}
+
+        <form onSubmit={handleSubmit} className="form">
+          <label htmlFor="roast-text" className="label">
+            뭘 디스하고 싶은가요?
+            <span className="label__hint">짧을수록 더 독하게 돌아올지도 몰라요</span>
+          </label>
+          <div className="textarea-shell">
+            <textarea
+              id="roast-text"
+              rows={4}
+              maxLength={280}
+              className="textarea"
+              placeholder="여기에 문장을 적어보세요"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+            <div className="textarea__footer">
+              <span className="muted">최대 280자</span>
+              <span className="counter">{text.length}자</span>
+            </div>
+          </div>
+
+          <div className="actions">
+            <div className="status">
+              {error ? (
+                <span className="status__error">{error}</span>
+              ) : (
+                <span className="status__info">AI가 가볍게 놀릴 준비 완료 🎯</span>
+              )}
+            </div>
+            <button type="submit" className="primary" disabled={disabled}>
+              {loading ? 'AI가 생각 중…' : '디스해줘 ㅋㅋ'}
+            </button>
+          </div>
+        </form>
+
+        {roast && (
+          <section className="result" aria-live="polite">
+            <div className="badge">AI의 부정적인 피드백 😈</div>
+            <p className="result__text">{roast}</p>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
