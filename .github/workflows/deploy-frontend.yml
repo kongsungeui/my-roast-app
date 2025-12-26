@@ -1,4 +1,4 @@
-name: Deploy Frontend to GitHub Pages
+name: Deploy Frontend to Cloudflare Pages
 
 on:
   push:
@@ -9,7 +9,8 @@ on:
       - ".github/workflows/deploy-frontend.yml"
 
 permissions:
-  contents: write
+  contents: read
+  deployments: write
 
 jobs:
   build-and-deploy:
@@ -23,11 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -39,9 +35,11 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        run: |
-          npm install -D gh-pages
-          npx gh-pages -d dist -r "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: my-roast-app
+          directory: frontend/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
