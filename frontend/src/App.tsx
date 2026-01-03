@@ -2,10 +2,12 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 
 const ideaPrompts = [
-  '내가 쓴 자소서 좀 꼬집어줘',
-  '밤새 만든 PPT 한 번 깔아줘',
-  '내가 한 말투 좀 디스해줘',
-  '팀 프로젝트 PR 리뷰처럼 날카롭게',
+  '오늘 아침에 늦잠 자서 지각했어',
+  '치킨 시켜먹고 운동 안 한 지 3주째',
+  '내일부터 다이어트 시작한다고 말했어',
+  '주말에 집에서 넷플릭스만 봤어',
+  '과제 마감 3시간 전에 시작했어',
+  '커피 하루에 5잔 마셨어',
 ];
 
 function App() {
@@ -87,15 +89,15 @@ function App() {
           <div className="textarea-shell">
             <textarea
               id="roast-text"
-              rows={4}
-              maxLength={280}
+              rows={3}
+              maxLength={120}
               className="textarea"
               placeholder="여기에 문장을 적어보세요"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
             <div className="textarea__footer">
-              <span className="muted">최대 280자</span>
+              <span className="muted">최대 120자</span>
               <span className="counter">{text.length}자</span>
             </div>
           </div>

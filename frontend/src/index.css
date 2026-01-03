@@ -151,7 +151,7 @@ body {
 
 .textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 72px;
   resize: vertical;
   border: none;
   outline: none;
