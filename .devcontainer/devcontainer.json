@@ -5,7 +5,10 @@
     "ghcr.io/devcontainers/features/git:1": {}
   },
   "forwardPorts": [3000, 5173],
-  "postCreateCommand": "npm install && cd frontend && npm install && cd ../server && npm install",
+  "postCreateCommand": "mkdir -p /home/node/.ssh && npm install && cd frontend && npm install && cd ../server && npm install",
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh/known_hosts,target=/home/node/.ssh/known_hosts,type=bind,readonly"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
