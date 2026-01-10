@@ -1,6 +1,12 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
+// Import character images
+import teenGirlImg from './assets/characters/teen_girl.png';
+import collegeGuyImg from './assets/characters/college_guy.png';
+import officeLadyImg from './assets/characters/office_lady.png';
+import oldManImg from './assets/characters/old_man.png';
+
 const ideaPrompts = [
   '오늘 아침에 늦잠 자서 지각했어',
   '치킨 시켜먹고 운동 안 한 지 3주째',
@@ -24,28 +30,28 @@ const characters: Character[] = [
     name: '까칠한 10대 여학생',
     description: '귀찮아하고 팩트폭행하는 10대',
     emoji: '🙄',
-    image: '/src/assets/characters/teen_girl.png',
+    image: teenGirlImg,
   },
   {
     id: 'college_guy',
     name: '무식한 20대 남자 대학생',
     description: '예의 없고 자기가 최고인 20대',
     emoji: '😎',
-    image: '/src/assets/characters/college_guy.png',
+    image: collegeGuyImg,
   },
   {
     id: 'office_lady',
     name: '겉배속무 30대 직장인',
     description: '배려하는 척 속으론 무시하는 30대',
     emoji: '😊',
-    image: '/src/assets/characters/office_lady.png',
+    image: officeLadyImg,
   },
   {
     id: 'old_man',
     name: '꼰대 40대 영포티',
     description: '조언하는 척 자기 자랑만 하는 40대',
     emoji: '🤓',
-    image: '/src/assets/characters/old_man.png',
+    image: oldManImg,
   },
 ];
 
