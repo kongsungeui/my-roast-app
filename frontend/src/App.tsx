@@ -10,11 +10,51 @@ const ideaPrompts = [
   '커피 하루에 5잔 마셨어',
 ];
 
+type Character = {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+  image: string;
+};
+
+const characters: Character[] = [
+  {
+    id: 'teen_girl',
+    name: '까칠한 10대 여학생',
+    description: '귀찮아하고 팩트폭행하는 10대',
+    emoji: '🙄',
+    image: '/src/assets/characters/teen_girl.png',
+  },
+  {
+    id: 'college_guy',
+    name: '무식한 20대 남자 대학생',
+    description: '예의 없고 자기가 최고인 20대',
+    emoji: '😎',
+    image: '/src/assets/characters/college_guy.png',
+  },
+  {
+    id: 'office_lady',
+    name: '겉배속무 30대 직장인',
+    description: '배려하는 척 속으론 무시하는 30대',
+    emoji: '😊',
+    image: '/src/assets/characters/office_lady.png',
+  },
+  {
+    id: 'old_man',
+    name: '꼰대 40대 영포티',
+    description: '조언하는 척 자기 자랑만 하는 40대',
+    emoji: '🤓',
+    image: '/src/assets/characters/old_man.png',
+  },
+];
+
 function App() {
   const [text, setText] = useState('');
   const [roast, setRoast] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedCharacter, setSelectedCharacter] = useState<string>(characters[0].id);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +73,7 @@ function App() {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, character: selectedCharacter }),
       });
 
       if (!res.ok) {
@@ -61,6 +101,44 @@ function App() {
         <p className="subtitle">
           한 문장을 적으면, AI가 가볍게 디스해줍니다. 장난스럽게 받아들이고 웃어넘겨주세요 😇
         </p>
+
+        <div className="character-section">
+          <h2 className="character-section__title">캐릭터를 선택하세요</h2>
+          <div className="character-grid">
+            {characters.map((character) => (
+              <button
+                key={character.id}
+                type="button"
+                className={`character-card ${selectedCharacter === character.id ? 'character-card--selected' : ''}`}
+                onClick={() => {
+                  setSelectedCharacter(character.id);
+                  setRoast('');
+                  setError('');
+                }}
+                disabled={loading}
+              >
+                <div className="character-card__image-wrapper">
+                  <img
+                    src={character.image}
+                    alt={character.name}
+                    className="character-card__image"
+                    onError={(e) => {
+                      // 이미지 로드 실패시 이모지로 대체
+                      e.currentTarget.style.display = 'none';
+                      const emojiDiv = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (emojiDiv) emojiDiv.style.display = 'block';
+                    }}
+                  />
+                  <div className="character-card__emoji" style={{ display: 'none' }}>
+                    {character.emoji}
+                  </div>
+                </div>
+                <div className="character-card__name">{character.name}</div>
+                <div className="character-card__description">{character.description}</div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="chip-row" role="list">
           {ideaPrompts.map((prompt) => (
@@ -118,7 +196,30 @@ function App() {
 
         {roast && (
           <section className="result" aria-live="polite">
-            <div className="badge">AI의 부정적인 피드백 😈</div>
+            <div className="result__header">
+              <div className="result__character">
+                <div className="result__character-image-wrapper">
+                  <img
+                    src={characters.find((c) => c.id === selectedCharacter)?.image}
+                    alt={characters.find((c) => c.id === selectedCharacter)?.name}
+                    className="result__character-image"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const emojiSpan = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (emojiSpan) emojiSpan.style.display = 'inline';
+                    }}
+                  />
+                  <span className="result__character-emoji" style={{ display: 'none' }}>
+                    {characters.find((c) => c.id === selectedCharacter)?.emoji}
+                  </span>
+                </div>
+                <div className="result__character-info">
+                  <div className="badge">
+                    {characters.find((c) => c.id === selectedCharacter)?.name}의 피드백 😈
+                  </div>
+                </div>
+              </div>
+            </div>
             <p className="result__text">{roast}</p>
           </section>
         )}
